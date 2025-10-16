@@ -9,7 +9,7 @@ import { ChatRoomPage } from '@/pages/ChatRoomPage';
 function App() {
   return (
     <BrowserRouter>
-      <Toaster />
+      <Toaster position="top-center" />
       <Routes>
         <Route path="/" element={<UserNamePage />} />
         <Route
