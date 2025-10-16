@@ -56,7 +56,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
             value={message}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message... (Shift+Enter for new line)"
+            placeholder="Type a message..."
             disabled={disabled}
             className="min-h-[60px] resize-none"
             rows={2}
@@ -79,7 +79,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
           size="icon"
           className="h-[60px] w-[60px] shrink-0"
         >
-          <Send className="h-5 w-5" />
+          <Send className="!h-6 !w-6" />
           <span className="sr-only">Send message</span>
         </Button>
       </div>
