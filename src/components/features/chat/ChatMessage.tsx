@@ -7,7 +7,23 @@ interface ChatMessageProps {
 }
 
 // Fun colors for other users' chat bubbles
-const USER_COLORS = ['ffbe0b', 'fb5607', 'ff006e', '8338ec', '3a86ff'];
+const USER_COLORS = [
+  'ffbe0b',
+  'fb5607',
+  'ff006e',
+  '8338ec',
+  '3a86ff',
+  'f46036',
+  '5b85aa',
+  '414770',
+  '372248',
+  '171123',
+  '092327',
+  '0b5351',
+  '00a9a5',
+  '4e8098',
+  '90c2e7',
+];
 
 // Generate consistent color for a username using a simple hash
 const getUserColor = (username: string): string => {
