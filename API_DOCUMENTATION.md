@@ -314,32 +314,32 @@ Each SSE message contains JSON data:
 
 ```javascript
 // Join room first
-fetch("/rooms/room1a2b3c/join", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
+fetch('/rooms/room1a2b3c/join', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    user_id: "user123",
-    user_name: "John Doe",
+    user_id: 'user123',
+    user_name: 'John Doe',
   }),
 });
 
 // Connect to message stream
-const eventSource = new EventSource("/rooms/room1a2b3c/stream");
+const eventSource = new EventSource('/rooms/room1a2b3c/stream');
 eventSource.onmessage = function (event) {
   const message = JSON.parse(event.data);
-  if (message.type !== "ping") {
-    console.log("New message:", message);
+  if (message.type !== 'ping') {
+    console.log('New message:', message);
   }
 };
 
 // Send a message
-fetch("/rooms/room1a2b3c/messages", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
+fetch('/rooms/room1a2b3c/messages', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    user_id: "user123",
-    user_name: "John Doe",
-    message: "Hello everyone!",
+    user_id: 'user123',
+    user_name: 'John Doe',
+    message: 'Hello everyone!',
   }),
 });
 ```

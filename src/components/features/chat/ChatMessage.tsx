@@ -6,6 +6,19 @@ interface ChatMessageProps {
   isOwnMessage: boolean;
 }
 
+// Fun colors for other users' chat bubbles
+const USER_COLORS = ['ffbe0b', 'fb5607', 'ff006e', '8338ec', '3a86ff'];
+
+// Generate consistent color for a username using a simple hash
+const getUserColor = (username: string): string => {
+  let hash = 0;
+  for (let i = 0; i < username.length; i++) {
+    hash = username.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % USER_COLORS.length;
+  return USER_COLORS[index];
+};
+
 export function ChatMessage({ message, isOwnMessage }: ChatMessageProps) {
   const formatTime = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
@@ -25,6 +38,9 @@ export function ChatMessage({ message, isOwnMessage }: ChatMessageProps) {
     );
   }
 
+  // Get user's color for other users' messages
+  const userColor = !isOwnMessage ? getUserColor(message.username) : null;
+
   return (
     <div
       className={cn('flex flex-col gap-1 px-4 py-2', isOwnMessage ? 'items-end' : 'items-start')}
@@ -32,7 +48,14 @@ export function ChatMessage({ message, isOwnMessage }: ChatMessageProps) {
       {/* Username and timestamp */}
       {!isOwnMessage && (
         <div className="flex items-center gap-2 text-xs">
-          <span className="font-semibold text-gray-700 dark:text-gray-300">{message.username}</span>
+          <span
+            className="font-semibold"
+            style={{
+              color: `#${userColor}`,
+            }}
+          >
+            {message.username}
+          </span>
           <span className="text-gray-500 dark:text-gray-400">{formatTime(message.timestamp)}</span>
         </div>
       )}
