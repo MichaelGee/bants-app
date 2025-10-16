@@ -15,6 +15,7 @@ const persistOptions = {
   persister,
   gcTime: STALE.HOURS.TWELVE,
   dehydrateOptions: {
+    // @ts-expect-error - types are wrong
     shouldDehydrateQuery: query => {
       return defaultShouldDehydrateQuery(query) && query?.meta?.persist === true;
     },
