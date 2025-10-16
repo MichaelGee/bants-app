@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Message } from '@/types';
 import { ChatMessage } from './ChatMessage';
 import { Button } from '@/components/ui/button';
-import { ArrowDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 interface MessageListProps {
   messages: Message[];
@@ -12,73 +12,24 @@ interface MessageListProps {
 export function MessageList({ messages, currentUserId }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [showNewMessageIndicator, setShowNewMessageIndicator] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const lastMessageCountRef = useRef(messages.length);
-  const isUserAwayRef = useRef(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
-  // Track when user leaves/returns to the window
+  // Auto-scroll to bottom on new messages
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        isUserAwayRef.current = true;
-      } else {
-        // User returned - if they're at the bottom, clear indicator
-        if (containerRef.current) {
-          const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-          const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
-          if (isAtBottom) {
-            setShowNewMessageIndicator(false);
-            setUnreadCount(0);
-          }
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, []);
-
-  // Handle new messages
-  useEffect(() => {
-    if (messages.length > lastMessageCountRef.current) {
-      const newMessageCount = messages.length - lastMessageCountRef.current;
-
-      if (containerRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-        const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
-
-        // If user was away and returned, show indicator instead of auto-scrolling
-        if (isUserAwayRef.current && !isAtBottom) {
-          setShowNewMessageIndicator(true);
-          setUnreadCount(prev => prev + newMessageCount);
-          isUserAwayRef.current = false;
-        } else if (isAtBottom) {
-          // User is at bottom, auto-scroll
-          containerRef.current.scrollTop = containerRef.current.scrollHeight;
-        } else {
-          // User is scrolled up but window is active, show indicator
-          setShowNewMessageIndicator(true);
-          setUnreadCount(prev => prev + newMessageCount);
-        }
-      }
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
-    lastMessageCountRef.current = messages.length;
   }, [messages]);
 
-  // Handle manual scroll
+  // Monitor scroll position to show/hide scroll button
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = container;
-      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
-
-      if (isAtBottom) {
-        setShowNewMessageIndicator(false);
-        setUnreadCount(0);
-      }
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollButton(!isNearBottom);
     };
 
     container.addEventListener('scroll', handleScroll);
@@ -88,8 +39,6 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
   const scrollToBottom = () => {
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
-      setShowNewMessageIndicator(false);
-      setUnreadCount(0);
     }
   };
 
@@ -121,14 +70,16 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
         </div>
       </div>
 
-      {/* New Message Indicator */}
-      {showNewMessageIndicator && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-          <Button onClick={scrollToBottom} className="gap-2 shadow-lg" size="sm" variant="default">
-            <ArrowDown className="h-4 w-4" />
-            {unreadCount > 0
-              ? `${unreadCount} new message${unreadCount > 1 ? 's' : ''}`
-              : 'New messages'}
+      {/* Scroll to bottom button */}
+      {showScrollButton && (
+        <div className="absolute bottom-6 right-6 z-10">
+          <Button
+            onClick={scrollToBottom}
+            size="icon"
+            className="h-10 w-10 rounded-full shadow-lg"
+            variant="default"
+          >
+            <ChevronDown className="!h-6 !w-6" />
           </Button>
         </div>
       )}

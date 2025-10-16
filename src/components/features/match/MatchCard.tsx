@@ -131,7 +131,7 @@ export function MatchCard({ match }: MatchCardProps) {
           className={cn(
             'w-full transition-all',
             match.status === 'live' &&
-              'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white'
           )}
           size="lg"
         >
