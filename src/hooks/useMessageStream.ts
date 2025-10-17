@@ -18,8 +18,10 @@ interface UseMessageStreamOptions {
 interface UseMessageStreamReturn {
   messages: Message[];
   isConnected: boolean;
+  isConnecting: boolean;
   error: Event | null;
   reconnect: () => void;
+  connectedClients: number;
 }
 
 /**
@@ -34,7 +36,9 @@ export const useMessageStream = ({
 }: UseMessageStreamOptions): UseMessageStreamReturn => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<Event | null>(null);
+  const [connectedClients, setConnectedClients] = useState(0);
   const streamRef = useRef<SSEMessageStream | null>(null);
 
   // Store callbacks in refs to avoid recreating handlers
@@ -50,6 +54,10 @@ export const useMessageStream = ({
   // Handle incoming messages
   const handleMessage = useCallback((streamMessage: StreamMessage) => {
     const message = streamMessageToMessage(streamMessage);
+
+    // Update connected clients count
+    setConnectedClients(streamMessage.connected_clients);
+
     setMessages(prev => {
       // Check if message already exists (avoid duplicates)
       if (prev.some(m => m.id === message.id)) {
@@ -62,6 +70,7 @@ export const useMessageStream = ({
   // Handle connection established
   const handleConnect = useCallback(() => {
     setIsConnected(true);
+    setIsConnecting(false);
     setError(null);
     onConnectRef.current?.();
   }, []);
@@ -69,6 +78,7 @@ export const useMessageStream = ({
   // Handle errors
   const handleError = useCallback((err: Event) => {
     setIsConnected(false);
+    setIsConnecting(false);
     setError(err);
     onErrorRef.current?.(err);
   }, []);
@@ -80,6 +90,7 @@ export const useMessageStream = ({
     }
     setMessages([]);
     setError(null);
+    setIsConnecting(true);
 
     const stream = new SSEMessageStream(roomId, handleMessage, handleError, handleConnect);
     stream.connect();
@@ -95,10 +106,12 @@ export const useMessageStream = ({
         streamRef.current = null;
       }
       setIsConnected(false);
+      setIsConnecting(false);
       return;
     }
 
     // Create new SSE connection
+    setIsConnecting(true);
     const stream = new SSEMessageStream(roomId, handleMessage, handleError, handleConnect);
     stream.connect();
     streamRef.current = stream;
@@ -110,6 +123,7 @@ export const useMessageStream = ({
         streamRef.current = null;
       }
       setIsConnected(false);
+      setIsConnecting(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, enabled]); // Only reconnect when roomId or enabled changes
@@ -117,7 +131,9 @@ export const useMessageStream = ({
   return {
     messages,
     isConnected,
+    isConnecting,
     error,
     reconnect,
+    connectedClients,
   };
 };

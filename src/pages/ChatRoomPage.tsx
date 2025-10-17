@@ -27,7 +27,9 @@ export function ChatRoomPage() {
   const {
     messages,
     isConnected,
+    isConnecting,
     error: streamError,
+    connectedClients,
   } = useMessageStream({
     roomId: matchId || '',
     enabled: !!matchId && !!user,
@@ -112,7 +114,13 @@ export function ChatRoomPage() {
     <div className="flex h-svh flex-col bg-gray-100 dark:bg-gray-950">
       {/* Centered container with max-width */}
       <div className="mx-auto flex h-full w-full max-w-2xl flex-col bg-white shadow-lg dark:bg-gray-900">
-        <ChatHeader match={match} isConnected={isConnected} hasStreamError={!!streamError} />
+        <ChatHeader
+          match={match}
+          isConnected={isConnected}
+          isConnecting={isConnecting}
+          hasStreamError={!!streamError}
+          connectedClients={connectedClients}
+        />
         <MessageList messages={messages} currentUserId={user?.id || ''} />
         <ChatInput
           onSendMessage={handleSendMessage}

@@ -47,11 +47,24 @@ Currently, no authentication is required. Users are identified by `user_id` and 
         "id": "room1a2b3c",
         "name": "Chelsea vs Barca",
         "description": "Live discussion for Chelsea vs Barcelona match",
+        "league": "Champions League",
+        "kickoff_time": "2025-10-18T20:00:00Z",
+        "stadium": "Stamford Bridge",
         "created_at": "2025-10-16T12:00:00Z",
+        "active_users": 0
+      },
+      {
+        "id": "room2d4e5f",
+        "name": "Arsenal vs Liverpool",
+        "description": "Live discussion for Arsenal vs Liverpool match",
+        "league": "Premier League",
+        "kickoff_time": "2025-10-19T15:30:00Z",
+        "stadium": "Emirates Stadium",
+        "created_at": "2025-10-17T15:00:00Z",
         "active_users": 0
       }
     ],
-    "total_rooms": 1
+    "total_rooms": 2
   }
 }
 ```
@@ -222,7 +235,8 @@ Each SSE message contains JSON data:
   "user_name": "John Doe",
   "message": "Hello everyone!",
   "timestamp": "2025-10-16T18:30:00.000Z",
-  "room_id": "room1a2b3c"
+  "room_id": "room1a2b3c",
+  "connected_clients": 3
 }
 ```
 
@@ -255,6 +269,9 @@ Each SSE message contains JSON data:
   "id": "string (alphanumeric)",
   "name": "string",
   "description": "string",
+  "league": "string",
+  "kickoff_time": "string (ISO timestamp)",
+  "stadium": "string",
   "created_at": "string (ISO timestamp)",
   "active_users": "integer"
 }
@@ -269,7 +286,8 @@ Each SSE message contains JSON data:
   "user_name": "string",
   "message": "string",
   "timestamp": "string (ISO timestamp)",
-  "room_id": "string"
+  "room_id": "string",
+  "connected_clients": "integer"
 }
 ```
 
@@ -302,11 +320,11 @@ Each SSE message contains JSON data:
 
 ## Current Limitations
 
-- Only one hardcoded room available: "room1a2b3c" named "Chelsea vs Barca"
+- Two available rooms: "room1a2b3c" (Chelsea vs Barca) and "room2d4e5f" (Arsenal vs Liverpool)
 - No user authentication or session management
 - Messages stored in memory (not persistent across server restarts)
 - No message history pagination
-- No user management or room creation endpoints
+- No user management or dynamic room creation endpoints
 
 ## Example Client Integration
 

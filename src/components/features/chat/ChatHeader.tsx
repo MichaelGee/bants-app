@@ -1,15 +1,23 @@
 import { useNavigate } from 'react-router-dom';
 import type { Match } from '@/types';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Wifi, WifiOff } from 'lucide-react';
+import { ArrowLeft, Wifi, WifiOff, Users, Loader2 } from 'lucide-react';
 
 interface ChatHeaderProps {
   match: Match;
   isConnected?: boolean;
   hasStreamError?: boolean;
+  connectedClients?: number;
+  isConnecting?: boolean;
 }
 
-export function ChatHeader({ match, isConnected = true, hasStreamError = false }: ChatHeaderProps) {
+export function ChatHeader({
+  match,
+  isConnected = true,
+  hasStreamError = false,
+  connectedClients = 0,
+  isConnecting = false,
+}: ChatHeaderProps) {
   const navigate = useNavigate();
 
   const formatMatchTime = () => {
@@ -35,11 +43,24 @@ export function ChatHeader({ match, isConnected = true, hasStreamError = false }
           </Button>
 
           <div className="flex items-center gap-2">
+            {/* Connected Users Count */}
+            {connectedClients > 0 && (
+              <span className="flex items-center gap-1.5 rounded-full bg-blue-500 px-3 py-1 text-xs font-semibold text-white">
+                <Users className="h-3 w-3" />
+                {connectedClients} {connectedClients === 1 ? 'user' : 'users'}
+              </span>
+            )}
+
             {/* Connection Status */}
             {hasStreamError ? (
               <span className="flex items-center gap-1.5 rounded-full bg-orange-500 px-3 py-1 text-xs font-semibold text-white">
                 <WifiOff className="h-3 w-3" />
                 Reconnecting...
+              </span>
+            ) : isConnecting ? (
+              <span className="flex items-center gap-1.5 rounded-full bg-yellow-500 px-3 py-1 text-xs font-semibold text-white">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Connecting...
               </span>
             ) : !isConnected ? (
               <span className="flex items-center gap-1.5 rounded-full bg-gray-500 px-3 py-1 text-xs font-semibold text-white">

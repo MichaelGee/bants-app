@@ -50,6 +50,9 @@ export interface Room {
   id: string;
   name: string;
   description: string;
+  league: string;
+  kickoff_time: string;
+  stadium: string;
   created_at: string;
   active_users: number;
 }
@@ -107,6 +110,7 @@ export interface StreamMessage {
   message: string;
   timestamp: string;
   room_id: string;
+  connected_clients: number;
 }
 
 /**
@@ -138,9 +142,9 @@ export const roomToMatch = (room: Room): Match => {
     id: room.id,
     homeTeam,
     awayTeam,
-    kickOffTime: new Date(room.created_at),
-    venue: 'Stadium', // Not provided by API
-    competition: room.description || 'Football Match',
+    kickOffTime: new Date(room.kickoff_time),
+    venue: room.stadium,
+    competition: room.league,
     status: 'live' as MatchStatus, // Assume all rooms are live
     active_users: room.active_users,
   };
